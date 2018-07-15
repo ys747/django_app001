@@ -98,33 +98,25 @@ def groups(request):
         # Frinedsのチェック更新時の処理
         if request.POST['mode'] == '__friends_form__':
             # 選択したGroupの取得
-            print('test001')
             sel_group = request.POST['group']
-            print('test002')
             group_obj = Group.objects.filter(title=sel_group).first()
             # チェックしたFriendsを取得
-            print('test003')
             sel_fds = request.POST.getlist('friends')
             # FrinedsのUserを取得
-            print('test004')
             sel_users = User.objects.filter(username__in=sel_fds)
             # Userのリストに含まれるユーザーが登録したFriendを取得
-            print('test005')
             fds = Friend.objects.filter(owner=request.user) \
                     .filter(user__in=sel_users)
             # すべてのFrinedにGroupを設定して保存する
             vlist = []
-            print('test006')
             for item in fds:
                 item.group = group_obj
                 item.save()
                 vlist.append(item.user.username)
             # メッセージを設定
-            print('test007')
             messages.success(request, 'チェックされたFriendを' + \
                     sel_group + 'に登録しました。')
             # フォームを用意
-            print('test008')
             groupsform = GroupSelectForm(request.user, \
                     {'groups':sel_group})
             friendsform = FriendsForm(request.user, \
